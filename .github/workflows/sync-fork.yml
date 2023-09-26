@@ -1,0 +1,32 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Run once every hour. Adjust this if needed.
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Add upstream remote
+      run: |
+        git remote add upstream https://github.com/vmsaif/ant-path-finding-using-A-Star-algorithm.git
+        git fetch upstream
+
+    - name: Merge changes from upstream
+      run: |
+        git merge upstream/main --allow-unrelated-histories
+
+    - name: Push changes to fork
+      run: git push
